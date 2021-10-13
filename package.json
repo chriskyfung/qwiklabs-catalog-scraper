@@ -1,0 +1,7 @@
+{
+  "name": "qwiklabs-catalog-scraper",
+  "version": "0.3.0",
+  "description": "Scraping labs and quests from Qwiklabs Catalog and save as CSV files",
+  "author": "Chris K.Y. Fung",
+  "license": "GPL-3.0"
+}
