@@ -1,40 +1,24 @@
-export function saveAs(data, filename) {
+/**
+ * Saves data to a file and triggers a download in the browser.
+ *
+ * @param {string|object} data The data to save. If an object is provided, it will be stringified.
+ * @param {string=} [filename='console.json'] The name of the file to save.
+ */
+export function saveAs(data, filename = 'console.json') {
   if (!data) {
     console.error('Console.save: No data');
     return;
   }
 
-  if (!filename) {
-    filename = 'console.json';
-  }
+  const dataAsString =
+    typeof data === 'object' ? JSON.stringify(data, undefined, 4) : data;
 
-  if (typeof data === 'object') {
-    data = JSON.stringify(data, undefined, 4);
-  }
-
-  const blob = new Blob([data], { type: 'text/json' });
-  const e = document.createEvent('MouseEvents');
+  const blob = new Blob([dataAsString], { type: 'text/json' });
   const a = document.createElement('a');
 
   a.download = filename;
   a.href = window.URL.createObjectURL(blob);
   a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-  e.initMouseEvent(
-    'click',
-    true,
-    false,
-    window,
-    0,
-    0,
-    0,
-    0,
-    0,
-    false,
-    false,
-    false,
-    false,
-    0,
-    null
-  );
-  a.dispatchEvent(e);
+  a.click();
+  window.URL.revokeObjectURL(a.href);
 }
