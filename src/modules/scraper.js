@@ -1,44 +1,77 @@
-import { getInnerText } from './dom-utils';
-import { saveAs } from './downloader';
+/**
+ * @fileoverview This module provides functionality to scrape catalog data from the page.
+ */
 
-export function scrapeCatalog() {
-  const URL = window.location.href;
-  const type = URL.match(/catalog\.(\w+)?/)[1];
-  const platformName = URL.match(/cloud%5B%5D=(\w+)&/)[1];
-  let iPage;
-  try {
-    iPage = URL.match(/page=(\w+)&/)[1];
-  } catch (e) {
-    iPage = 1;
+import { saveAs } from './downloader';
+import { extractActivityData } from './dom-utils';
+
+const SELECTORS = {
+  searchResultContainer: 'ql-search-result-container',
+  activityCard: 'ql-activity-card',
+  nextPageButton: 'ql-icon-button.next-page',
+};
+
+/**
+ * Scrapes the catalog data from the current page.
+ *
+ * It automatically handles pagination by clicking the "load more" button
+ * until all activities are loaded, then extracts the data and downloads it as a CSV file.
+ * @export
+ */
+export async function scrapeCatalog() {
+  const searchResultContainer = document.querySelector(
+    SELECTORS.searchResultContainer
+  );
+  if (!searchResultContainer || !searchResultContainer.shadowRoot) {
+    console.error('Search result container not found.');
+    return;
   }
 
-  // query the hyperlink tag of all catalog items
-  const items = document.querySelectorAll('div.catalog-item');
+  // Handle pagination by repeatedly clicking "next page"
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const nextPageButton = searchResultContainer.shadowRoot.querySelector(
+      SELECTORS.nextPageButton
+    );
+    if (nextPageButton && !nextPageButton.hasAttribute('disabled')) {
+      nextPageButton.click();
+      // Wait for new content to load
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    } else {
+      break; // No more "next page" button, or it's disabled
+    }
+  }
 
-  // use console.log to print the query results
-  console.group('Calalog Items');
+  // Scrape the data
+  const cards = searchResultContainer.shadowRoot.querySelectorAll(
+    SELECTORS.activityCard
+  );
+  const scrapedData = [];
+  for (const card of cards) {
+    const data = extractActivityData(card);
+    if (data) {
+      scrapedData.push(data);
+    }
+  }
 
-  const csvheader = 'type,id,name,duration,level,costs,env\n';
-  let csvData = csvheader;
+  // Generate CSV
+  const csvHeader = 'ID,Type,Name,Duration,Level,Credits,Link\\n';
+  const csvBody = scrapedData
+    .map(
+      (d) =>
+        `${d.id},${d.type},"${d.name.replace(/"/g, '""')}",${d.duration},${
+          d.level
+        },${d.credits},${d.link}`
+    )
+    .join('\\n');
+  const csvData = csvHeader + csvBody;
 
-  items.forEach((i) => {
-    const name = getInnerText(i, '.catalog-item__title');
-    const id = i
-      .querySelector('.catalog-item__title > a')
-      .href.match(/(focuses|quests)\/(\d+)/)[2];
-    const dur = getInnerText(i, '.catalog-item-duration');
-    const level = getInnerText(i, '.catalog-item-level');
-    const cost = getInnerText(i, '.catalog-item-cost');
-    const line = `${type},${id},"${name}",${dur},${level},${cost},${platformName}\n`;
-    console.log(line);
-    csvData += line;
-  });
-  console.groupEnd('Calalog Items');
+  // Download CSV
+  const url = new URL(window.location.href);
+  const format = url.searchParams.get('format[0]') || 'all';
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const filename = `qwiklabs-catalog-${format}-${timestamp}.csv`;
+  saveAs(csvData, filename);
 
-  saveAs(csvData, `qwiklabs-${type}-${platformName}-${iPage}.csv`);
-
-  setTimeout(function () {
-    const nextBtn = document.querySelector('.next_page');
-    if (nextBtn) nextBtn.click();
-  }, 3000);
+  console.log(`Scraped ${scrapedData.length} items and saved to ${filename}`);
 }
