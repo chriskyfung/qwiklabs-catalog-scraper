@@ -13,31 +13,44 @@ const URLS = {
 };
 
 /**
- * Creates a download link element.
+ * Creates a download button element.
  * @param {string} type - The catalog format (e.g., 'labs', 'courses').
  * @param {string} url - The URL for the download link.
- * @return {HTMLAnchorElement} The created anchor element.
+ * @return {HTMLButtonElement} The created button element.
  */
-function createDownloadLink(type, url) {
-  const link = document.createElement('a');
+function createDownloadButton(type, url) {
+  const button = document.createElement('button');
+  Object.assign(button.style, {
+    backgroundColor: 'inherit',
+    border: '1px solid #c4c7c5',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: '14px',
+    height: '32px',
+    padding: '0px 16px',
+  });
 
   let finalUrl = url;
   if (typeof GM_getValue === 'function' && GM_getValue('add_per_page', false)) {
     finalUrl += '&per_page=100';
   }
 
-  link.href = finalUrl;
-  link.target = '_blank';
+  button.addEventListener('click', () => {
+    window.open(finalUrl, '_blank');
+  });
 
-  const icon = document.createElement('span');
-  icon.className = 'material-icons';
-  icon.style.verticalAlign = 'text-bottom';
-  icon.textContent = 'file_download';
+  button.addEventListener('mouseover', () => {
+    button.style.backgroundColor = '#e8def8';
+  });
 
-  link.appendChild(icon);
-  link.appendChild(document.createTextNode(` All ${type}`));
+  button.addEventListener('mouseout', () => {
+    button.style.backgroundColor = 'inherit';
+  });
 
-  return link;
+  button.textContent = `All ${type}`;
+
+  return button;
 }
 
 /**
@@ -47,15 +60,34 @@ export function addDownloadLinks() {
   const filters = document.querySelector('.catalog-filters');
   if (filters) {
     const container = document.createElement('div');
-    container.style.padding = '0 16px 16px';
+    container.style.padding = '16px';
     container.style.display = 'flex';
+    container.style.alignItems = 'center';
     container.style.gap = '16px';
+    container.style.borderTop = '1px solid #ccc';
+    container.style.marginTop = '16px';
 
-    const labsLink = createDownloadLink('labs', URLS.labs);
-    container.appendChild(labsLink);
+    const label = document.createElement('span');
+    label.style.display = 'flex';
+    label.style.alignItems = 'center';
+    label.style.gap = '8px';
+    label.style.fontWeight = 'bold';
 
-    const coursesLink = createDownloadLink('courses', URLS.courses);
-    container.appendChild(coursesLink);
+    const icon = document.createElement('span');
+    icon.className = 'material-icons';
+    icon.textContent = 'file_download';
+    label.appendChild(icon);
+
+    const text = document.createTextNode('Scrape catalog as CSV:');
+    label.appendChild(text);
+
+    container.appendChild(label);
+
+    const labsButton = createDownloadButton('labs', URLS.labs);
+    container.appendChild(labsButton);
+
+    const coursesButton = createDownloadButton('courses', URLS.courses);
+    container.appendChild(coursesButton);
 
     filters.appendChild(container);
   }
