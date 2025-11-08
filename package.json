@@ -11,6 +11,21 @@
     "prettier": "prettier \"**/*.js\" --write --ignore-path .eslintignore",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chriskyfung/qwiklabs-catalog-scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chriskyfung/qwiklabs-catalog-scraper/issues"
+  },
+  "homepage": "https://github.com/chriskyfung/qwiklabs-catalog-scraper#readme",
+  "keywords": [
+    "userscript",
+    "qwiklabs",
+    "web-scraper",
+    "google-skills",
+    "cloud-skills"
+  ],
   "author": "Chris K.Y. Fung",
   "license": "GPL-3.0",
   "devDependencies": {
