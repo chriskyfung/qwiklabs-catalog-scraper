@@ -21,6 +21,7 @@ export default defineConfig({
         supportUrl:
           'https://github.com/chriskyfung/qwiklabs-catalog-scraper/issues',
         match: ['https://*.skills.google/catalog*'],
+        grant: ['GM_getValue', 'GM_setValue', 'GM_registerMenuCommand'],
       },
     }),
   ],

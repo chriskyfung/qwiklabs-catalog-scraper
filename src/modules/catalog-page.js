@@ -7,9 +7,9 @@
  * @description A mapping of catalog formats to their corresponding URLs.
  */
 const URLS = {
-  labs: 'https://www.skills.google/catalog?skill-badge%5B%5D=__any__&format%5B%5D=labs&level%5B%5D=__any__&language%5B%5D=__any__&keywords=&locale=&per_page=100',
+  labs: 'https://www.skills.google/catalog?skill-badge%5B%5D=__any__&format%5B%5D=labs&level%5B%5D=__any__&language%5B%5D=__any__&keywords=&locale=',
   courses:
-    'https://www.skills.google/catalog?skill-badge%5B%5D=__any__&format%5B%5D=courses&level%5B%5D=__any__&language%5B%5D=__any__&keywords=&locale=&per_page=100',
+    'https://www.skills.google/catalog?skill-badge%5B%5D=__any__&format%5B%5D=courses&level%5B%5D=__any__&language%5B%5D=__any__&keywords=&locale=',
 };
 
 /**
@@ -19,7 +19,13 @@ const URLS = {
  */
 function createDownloadLink(url) {
   const link = document.createElement('a');
-  link.href = url;
+
+  let finalUrl = url;
+  if (typeof GM_getValue === 'function' && GM_getValue('add_per_page', false)) {
+    finalUrl += '&per_page=100';
+  }
+
+  link.href = finalUrl;
   link.target = '_blank';
   link.innerHTML = `<i class="fas fa-file-download"></i>&nbsp;All`;
   return link;
