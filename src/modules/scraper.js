@@ -55,7 +55,7 @@ export async function scrapeCatalog() {
   }
 
   // Generate CSV
-  const csvHeader = 'ID,Type,Name,Duration,Level,Credits,Link\\n';
+  const csvHeader = 'ID,Type,Name,Duration,Level,Credits,Link\n';
   const csvBody = scrapedData
     .map(
       (d) =>
@@ -63,7 +63,7 @@ export async function scrapeCatalog() {
           d.level
         },${d.credits},${d.link}`
     )
-    .join('\\n');
+    .join('\n');
   const csvData = csvHeader + csvBody;
 
   // Download CSV
