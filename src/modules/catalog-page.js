@@ -14,10 +14,11 @@ const URLS = {
 
 /**
  * Creates a download link element.
+ * @param {string} type - The catalog format (e.g., 'labs', 'courses').
  * @param {string} url - The URL for the download link.
  * @return {HTMLAnchorElement} The created anchor element.
  */
-function createDownloadLink(url) {
+function createDownloadLink(type, url) {
   const link = document.createElement('a');
 
   let finalUrl = url;
@@ -27,29 +28,35 @@ function createDownloadLink(url) {
 
   link.href = finalUrl;
   link.target = '_blank';
-  link.innerHTML = `<i class="fas fa-file-download"></i>&nbsp;All`;
-  return link;
-}
 
-/**
- * Adds a download link to the label of a given format.
- * @param {string} format - The catalog format (e.g., 'labs', 'courses').
- */
-function addDownloadLinkToLabel(format) {
-  const label = document.querySelector(`label[for='format_${format}']`);
-  if (label) {
-    const span = document.createElement('span');
-    span.className = 'mdl-checkbox__label';
-    span.style.alignItems = 'flex-start';
-    span.appendChild(createDownloadLink(URLS[format]));
-    label.appendChild(span);
-  }
+  const icon = document.createElement('span');
+  icon.className = 'material-icons';
+  icon.style.verticalAlign = 'text-bottom';
+  icon.textContent = 'file_download';
+
+  link.appendChild(icon);
+  link.appendChild(document.createTextNode(` All ${type}`));
+
+  return link;
 }
 
 /**
  * Adds download links for all supported catalog formats.
  */
 export function addDownloadLinks() {
-  addDownloadLinkToLabel('labs');
-  addDownloadLinkToLabel('courses');
+  const filters = document.querySelector('.catalog-filters');
+  if (filters) {
+    const container = document.createElement('div');
+    container.style.padding = '0 16px 16px';
+    container.style.display = 'flex';
+    container.style.gap = '16px';
+
+    const labsLink = createDownloadLink('labs', URLS.labs);
+    container.appendChild(labsLink);
+
+    const coursesLink = createDownloadLink('courses', URLS.courses);
+    container.appendChild(coursesLink);
+
+    filters.appendChild(container);
+  }
 }
