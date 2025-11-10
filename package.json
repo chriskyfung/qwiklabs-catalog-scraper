@@ -9,7 +9,9 @@
     "lint": "npm run eslint && npm run prettier",
     "eslint": "eslint --ext .js --fix .",
     "prettier": "prettier \"**/*.js\" --write --ignore-path .eslintignore",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
