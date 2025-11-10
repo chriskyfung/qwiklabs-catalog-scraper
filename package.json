@@ -9,7 +9,9 @@
     "lint": "npm run eslint && npm run prettier",
     "eslint": "eslint --ext .js --fix .",
     "prettier": "prettier \"**/*.js\" --write --ignore-path .eslintignore",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
@@ -29,11 +31,14 @@
   "author": "Chris K.Y. Fung",
   "license": "GPL-3.0",
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.8",
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.1.0",
+    "jsdom": "^27.1.0",
     "prettier": "^3.2.5",
     "vite": "^7.2.2",
-    "vite-plugin-monkey": "^7.1.4"
+    "vite-plugin-monkey": "^7.1.4",
+    "vitest": "^4.0.8"
   }
 }

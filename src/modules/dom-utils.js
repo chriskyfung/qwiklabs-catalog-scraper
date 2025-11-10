@@ -34,10 +34,11 @@ export function extractActivityData(card) {
     if (!linkElement || !labelElement) {
       return null;
     }
-    id = linkElement.getAttribute('href').match(/\/(\d+)/)?.[1];
+    const path = linkElement.getAttribute('href');
+    id = path.match(/\/(\d+)/)?.[1];
     name = linkElement.getAttribute('title');
     type = labelElement.getAttribute('activity')?.toLowerCase();
-    link = linkElement.href;
+    link = `https://www.skills.google${path}`;
   }
 
   if (!id || !type) {
