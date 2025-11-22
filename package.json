@@ -30,9 +30,13 @@
   ],
   "author": "Chris K.Y. Fung",
   "license": "GPL-3.0",
+  "engines": {
+    "node": "^18.18.0"
+  },
+  "type": "module",
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.8",
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.1",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^27.1.0",
