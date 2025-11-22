@@ -1,36 +1,62 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import prettier from "eslint-config-prettier";
+import js from "@eslint/js";
+import jsdoc from "eslint-plugin-jsdoc";
 import globals from "globals";
+import prettierConfig from "eslint-config-prettier";
 
-export default defineConfig([
-  prettier,  // Add prettier config to the array
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.es2021
-      },
-      ecmaVersion: 12,
-      sourceType: "module"
+export default [
+    // Global ignores
+    {
+        ignores: [
+            "**/.DS_Store",
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/package-lock.json",
+            "**/coverage/**",
+            "!**/.*.js",
+        ],
     },
-    rules: {
-      'max-len': [
-        "warn",
-        {
-          code: 120,
-          ignoreUrls: true,
-          ignoreStrings: true,
-          ignoreTemplateLiterals: true,
-          ignoreRegExpLiterals: true,
+
+    // Base configuration for all JS files
+    js.configs.recommended,
+    {
+        languageOptions: {
+            ecmaVersion: "latest",
+            sourceType: "module",
+            globals: {
+                ...globals.browser,
+                ...globals.greasemonkey,
+            },
         },
-      ]
+        plugins: {
+            jsdoc,
+        },
+        rules: {
+            "jsdoc/check-alignment": "warn",
+            "jsdoc/check-param-names": "error",
+            "max-len": [
+                "warn",
+                {
+                    code: 120,
+                    ignoreUrls: true,
+                    ignoreStrings: true,
+                    ignoreTemplateLiterals: true,
+                    ignoreRegExpLiterals: true,
+                },
+            ],
+        },
     },
-  },
-  globalIgnores([
-    "**/.DS_Store",
-    "**/node_modules/*",
-    "**/dist/*",
-    "**/package-lock.json",
-    "!**/.*.js",
-  ]),
-]);
+
+    // Configuration for test files
+    {
+        files: ["src/**/*.js", "vitest.setup.js"],
+        languageOptions: {
+            globals: {
+                ...globals.node,
+                ...globals.vitest,
+            },
+        },
+    },
+
+    // Prettier config to disable conflicting rules
+    prettierConfig,
+];
