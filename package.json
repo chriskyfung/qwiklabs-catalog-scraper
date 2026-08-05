@@ -40,8 +40,8 @@
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsdoc": "^61.4.0",
-    "jsdom": "^27.1.0",
-    "prettier": "^3.2.5",
+    "jsdom": "^30.0.1",
+    "prettier": "^3.9.6",
     "vite": "^7.3.0",
     "vite-plugin-monkey": "^7.1.4",
     "vitest": "^4.1.10"
